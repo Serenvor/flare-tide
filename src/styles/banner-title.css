@@ -33,6 +33,8 @@
     justify-content: center;
     vertical-align: middle;
     line-height: 1.2;
+    font-family: var(--font-banner-title, inherit);
+    letter-spacing: 0.15em;
 }
 
 /* .banner-page-title-icon {

@@ -2,10 +2,10 @@ import type { AnnouncementConfig } from "../types/announcementConfig";
 
 export const announcementConfig: AnnouncementConfig = {
 	// 公告标题
-	title: "💕 欢迎来到斐拾婷光",
+	title: "🎉 Flare-Tide·汐焰拾叙 🎉",
 
 	// 公告内容
-	content: "这里收藏我们所有温柔、故事与心里话。",
+	content: "记下每一次心动，每一次奔赴，把所有的偏爱与心里话，尽数安放于此",
 
 	// 是否允许用户关闭公告
 	closable: false,

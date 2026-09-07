@@ -8,7 +8,7 @@ import FancyboxManager from "@components/features/FancyboxManager.astro";
 import FontSetup from "@components/features/FontSetup.astro";
 import MusicManager from "@components/features/MusicManager.astro";
 import MusicPlayerView from "@components/features/MusicPlayerView.astro";
-import SakuraEffect from "@components/features/SakuraEffect.astro";
+import FloatingChars from "@components/features/FloatingChars.astro";
 import ConfigCarrier from "@components/layout/ConfigCarrier.astro";
 
 import {
@@ -626,8 +626,8 @@ const siteLang = lang.replace("_", "-");
     )}
 
 
-    <!-- Sakura Effect -->
-    <SakuraEffect />
+    <!-- Floating Chars - 漂浮角色粒子特效 -->
+    <FloatingChars />
 
     <!-- Fancybox Manager -->
     <FancyboxManager />
@@ -635,24 +635,44 @@ const siteLang = lang.replace("_", "-");
     <!-- Tab 代码块交互 -->
     <CodeGroupManager />
 
-    <!-- 点击爱心彩蛋 -->
+    <!-- 点击角色彩蛋：3张角色图片随机切换 -->
     <script is:inline data-swup-ignore-script>
       (function() {
-        var hearts = ['❤️', '💕', '💗', '💖', '💘', '💝', '✨'];
-        document.addEventListener('click', function(e) {
-          for (var i = 0; i < 3; i++) {
-            var heart = document.createElement('span');
-            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-            heart.style.cssText = 'position:fixed;pointer-events:none;z-index:99999;font-size:' + (16 + Math.random() * 16) + 'px;left:' + (e.clientX + (Math.random() - 0.5) * 40) + 'px;top:' + e.clientY + 'px;transition:all 1s ease-out;opacity:1;';
-            document.body.appendChild(heart);
+        var BASE = "/flare-tide/";
+        var CHARS = [
+          "assets/images/floating-chars/317523ce3b887f5e65531e4c217c61d2.png",
+          "assets/images/floating-chars/1720259d1f6f690c6c13af7b80ae7eaa.png",
+          "assets/images/floating-chars/4cf9f096ab19756956d389dbc1e65e16.png",
+        ];
+        var isMobile = window.innerWidth < 768;
+        var SIZE_MIN = isMobile ? 28 : 38;
+        var SIZE_MAX = isMobile ? 42 : 56;
+        var COUNT = isMobile ? 2 : 3;
+
+        document.addEventListener("click", function(e) {
+          for (var i = 0; i < COUNT; i++) {
+            var img = document.createElement("img");
+            img.src = BASE + CHARS[Math.floor(Math.random() * CHARS.length)];
+            img.draggable = false;
+            img.style.cssText =
+              "position:fixed;pointer-events:none;z-index:99999;" +
+              "width:" + (SIZE_MIN + Math.random() * (SIZE_MAX - SIZE_MIN)) + "px;" +
+              "height:auto;" +
+              "left:" + (e.clientX - 20 + (Math.random() - 0.5) * 50) + "px;" +
+              "top:" + e.clientY + "px;" +
+              "opacity:1;" +
+              "transform:scale(0.3) rotate(" + (Math.random() * 30 - 15) + "deg);" +
+              "transition:all 0.9s cubic-bezier(0.25,0.46,0.45,0.94);";
+            document.body.appendChild(img);
             (function(el, delay) {
               setTimeout(function() {
-                el.style.top = (e.clientY - 60 - Math.random() * 40) + 'px';
-                el.style.opacity = '0';
-                el.style.transform = 'scale(' + (0.5 + Math.random()) + ') rotate(' + (Math.random() * 30 - 15) + 'deg)';
+                el.style.top = (e.clientY - 80 - Math.random() * 50) + "px";
+                el.style.left = (parseFloat(el.style.left) + (Math.random() - 0.5) * 60) + "px";
+                el.style.opacity = "0";
+                el.style.transform = "scale(" + (0.6 + Math.random() * 0.5) + ") rotate(" + (Math.random() * 40 - 20) + "deg)";
               }, delay);
-              setTimeout(function() { el.remove(); }, 1200);
-            })(heart, i * 80);
+              setTimeout(function() { el.remove(); }, 1100);
+            })(img, i * 100);
           }
         });
       })();

@@ -3,8 +3,8 @@ import type { SakuraConfig } from "../types/effectsConfig";
 // 特效配置 - 集中管理所有动画特效
 
 export const sakuraConfig: SakuraConfig = {
-	// 是否启用樱花特效
-	enable: true,
+	// 是否启用樱花特效（已替换为漂浮角色粒子）
+	enable: false,
 
 	// 是否使用 Web Worker 绘制（关闭则走主线程 Canvas，Worker 可能因图片加载失败而静默崩溃）
 	useWorker: false,

@@ -11,58 +11,55 @@ import {
 const getDynamicNavBarConfig = (): NavBarConfig => {
 	const links: NavBarLink[] = [];
 
-	// 🏠 首页
+	// 🏠 初隅
 	links.push({
-		name: "首页",
+		name: "初隅",
 		url: "/",
 		icon: "material-symbols:home",
 	});
 
-	// 💌 书信集
+	// 📚 岁隅书辞（下拉菜单）
 	links.push({
-		name: "书信集",
-		url: "/archive/?category=书信集",
-		icon: "material-symbols:mail",
-	});
-
-	// 📜 纪事录
-	links.push({
-		name: "纪事录",
-		url: "/archive/?category=纪事录",
+		name: "岁隅书辞",
+		url: "#",
 		icon: "material-symbols:auto-stories",
+		children: [
+			{
+				name: "书信集",
+				url: "/archive/?category=书信集",
+			},
+			{
+				name: "纪事录",
+				url: "/archive/?category=纪事录",
+			},
+			{
+				name: "情绪随笔",
+				url: "/archive/?category=情绪随笔",
+			},
+			{
+				name: "碎碎念",
+				url: "/archive/?category=碎碎念",
+			},
+		],
 	});
 
-	// 🫀 情绪随笔
+	// 🖼 浮光集
 	links.push({
-		name: "情绪随笔",
-		url: "/archive/?category=情绪随笔",
-		icon: "material-symbols:favorite",
-	});
-
-	// ✍️ 碎碎念
-	links.push({
-		name: "碎碎念",
-		url: "/archive/?category=碎碎念",
-		icon: "material-symbols:edit",
-	});
-
-	// 🖼 回忆相册
-	links.push({
-		name: "回忆相册",
+		name: "浮光集",
 		url: "/gallery/",
 		icon: "material-symbols:photo-library",
 	});
 
-	// ⏳ 时光轴
+	// ⏳ 时序札
 	links.push({
-		name: "时光轴",
+		name: "时序札",
 		url: "/timeline/",
 		icon: "material-symbols:timeline",
 	});
 
-	// 💫 心愿清单
+	// 💫 寄愿笺
 	links.push({
-		name: "心愿清单",
+		name: "寄愿笺",
 		url: "/wishlist/",
 		icon: "material-symbols:star",
 	});
@@ -80,7 +77,7 @@ export const navBarSearchConfig: NavBarSearchConfig = {
 // ============================================================================
 export const LinkPresets: Record<string, NavBarLink> = {
 	Home: {
-		name: "首页",
+		name: "初隅",
 		url: "/",
 		icon: "material-symbols:home",
 	},
@@ -90,7 +87,7 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:person",
 	},
 	Gallery: {
-		name: "回忆相册",
+		name: "浮光集",
 		url: "/gallery/",
 		icon: "material-symbols:photo-library",
 		pageKey: "gallery",

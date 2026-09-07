@@ -1,7 +1,7 @@
 ---
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
-const title = "心愿清单";
-const description = "一起想做的事，一起走过的路";
+const title = "寄愿笺";
+const description = "记下大大小小的念想，留存属于我们的心愿";
 ---
 
 <MainGridLayout title={title} description={description}>
@@ -9,9 +9,8 @@ const description = "一起想做的事，一起走过的路";
     <div class="card-base z-10 px-6 py-8 relative w-full">
 
       <div class="text-center mb-6">
-        <div class="text-2xl mb-1">💫</div>
-        <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">心愿清单</h1>
-        <p class="text-sm text-neutral-400 dark:text-neutral-500">一起想做的事，一起走过的路</p>
+        <h1 class="text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">{title}</h1>
+        <p class="text-base text-neutral-500 dark:text-neutral-400">{description}</p>
       </div>
 
       <div class="flex justify-center gap-6 mb-6">

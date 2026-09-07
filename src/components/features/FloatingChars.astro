@@ -1,0 +1,273 @@
+---
+// 漂浮角色粒子特效：7种萌系角色图片，随机多姿态漂浮系统
+// 修复：初始位置随机分布、尺寸缩小、移动端适配
+---
+
+<style>
+  .floating-chars-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+
+  .floating-char {
+    position: absolute;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .floating-char img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.06));
+  }
+
+  /* 暂停动画 */
+  .floating-chars-layer.paused .floating-char {
+    animation-play-state: paused !important;
+  }
+</style>
+
+<div class="floating-chars-layer" id="floating-chars-layer"></div>
+
+<script is:inline>
+(function() {
+  var BASE = "/flare-tide/";
+  var LAYER_ID = "floating-chars-layer";
+
+  var CHAR_IMAGES = [
+    "1720259d1f6f690c6c13af7b80ae7eaa.png",
+    "17b4511d9275135c64858307fd0ab1d2.png",
+    "317523ce3b887f5e65531e4c217c61d2.png",
+    "4cf9f096ab19756956d389dbc1e65e16.png",
+    "5a2b383a14327e09b7949ace37b6da1d.png",
+    "9922ce33096d633fd05ef81d5dd74bc6.png",
+    "c9ae31b8a178349267bd680678b9cec4.png",
+  ];
+
+  var SIZE_DESKTOP = { min: 30, max: 55 };
+  var SIZE_MOBILE = { min: 22, max: 38 };
+  var SIZE_RARE_DESKTOP = { min: 50, max: 75 };
+  var SIZE_RARE_MOBILE = { min: 35, max: 52 };
+
+  var COUNT_DESKTOP = 10;
+  var COUNT_MOBILE = 4;
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function randInt(a, b) { return Math.floor(rand(a, b + 1)); }
+
+  // 为每个粒子生成独立的 @keyframes，确保起始位置真正随机
+  function createKeyframesName(p, idx) {
+    return "fc-" + idx + "-" + p.imgIndex;
+  }
+
+  function generateKeyframes(p, vw, vh) {
+    var name = createKeyframesName(p, p.index);
+    var sx, sy, ex, ey;
+    var amp; // 随机飘动幅度
+
+    switch (p.type) {
+      case "up":
+        sx = rand(5, 90);
+        sy = 105;
+        ex = sx + rand(-8, 8);
+        ey = -10;
+        break;
+      case "right":
+        sx = -8;
+        sy = rand(10, 85);
+        ex = 108;
+        ey = sy + rand(-15, 15);
+        break;
+      case "left":
+        sx = 108;
+        sy = rand(10, 85);
+        ex = -8;
+        ey = sy + rand(-15, 15);
+        break;
+      case "drift":
+        // 慢速漂浮：在屏幕内小范围移动
+        sx = rand(10, 80);
+        sy = rand(15, 75);
+        amp = rand(5, 15);
+        ex = sx + rand(-amp, amp);
+        ey = sy + rand(-amp, amp);
+        break;
+      case "zigzag":
+        // Z字形：水平穿越+上下波动
+        sx = -8;
+        sy = rand(20, 70);
+        ex = 108;
+        ey = sy + rand(-20, 20);
+        break;
+      default:
+        sx = rand(5, 90); sy = 105; ex = sx; ey = -10;
+    }
+
+    var r1 = rand(-25, 25);
+    var r2 = rand(-25, 25);
+
+    return "@keyframes " + name + " {\n" +
+      "0%   { transform: translate(" + sx + "vw, " + sy + "vh) rotate(" + r1 + "deg); opacity: 0; }\n" +
+      "8%   { transform: translate(" + (sx + (ex - sx) * 0.08) + "vw, " + (sy + (ey - sy) * 0.08) + "vh) rotate(" + (r1 + (r2 - r1) * 0.08) + "deg); opacity: " + p.maxOpacity + "; }\n" +
+      "92%  { transform: translate(" + (sx + (ex - sx) * 0.92) + "vw, " + (sy + (ey - sy) * 0.92) + "vh) rotate(" + (r1 + (r2 - r1) * 0.92) + "deg); opacity: " + p.maxOpacity + "; }\n" +
+      "100% { transform: translate(" + ex + "vw, " + ey + "vh) rotate(" + r2 + "deg); opacity: 0; }\n" +
+      "}";
+  }
+
+  function createParticle(index, isMobile) {
+    var imgIndex = randInt(0, CHAR_IMAGES.length - 1);
+    var isRare = imgIndex === 2;
+
+    var sizeRange = isRare
+      ? (isMobile ? SIZE_RARE_MOBILE : SIZE_RARE_DESKTOP)
+      : (isMobile ? SIZE_MOBILE : SIZE_DESKTOP);
+    var size = rand(sizeRange.min, sizeRange.max);
+
+    // 动画类型（加权）
+    var types = [
+      { t: "up", w: 30 },
+      { t: "right", w: 20 },
+      { t: "left", w: 20 },
+      { t: "drift", w: 15 },
+      { t: "zigzag", w: 15 },
+    ];
+    var totalW = 0;
+    for (var i = 0; i < types.length; i++) totalW += types[i].w;
+    var r = Math.random() * totalW;
+    var acc = 0;
+    var chosenType = types[0].t;
+    for (var i = 0; i < types.length; i++) {
+      acc += types[i].w;
+      if (r <= acc) { chosenType = types[i].t; break; }
+    }
+
+    var durMin, durMax;
+    if (isMobile) {
+      switch (chosenType) {
+        case "up":     durMin = 22; durMax = 38; break;
+        case "right":  durMin = 25; durMax = 42; break;
+        case "left":   durMin = 25; durMax = 42; break;
+        case "drift":  durMin = 30; durMax = 50; break;
+        case "zigzag": durMin = 28; durMax = 45; break;
+        default:       durMin = 25; durMax = 40;
+      }
+    } else {
+      switch (chosenType) {
+        case "up":     durMin = 18; durMax = 30; break;
+        case "right":  durMin = 20; durMax = 35; break;
+        case "left":   durMin = 20; durMax = 35; break;
+        case "drift":  durMin = 25; durMax = 40; break;
+        case "zigzag": durMin = 22; durMax = 38; break;
+        default:       durMin = 20; durMax = 35;
+      }
+    }
+
+    var duration = rand(durMin, durMax);
+    var delay = rand(0, duration * 0.6);
+    var maxOpacity = isMobile ? rand(0.5, 0.75) : rand(0.6, 0.85);
+    if (isRare) maxOpacity = Math.min(maxOpacity + 0.1, 0.95);
+
+    return {
+      index: index,
+      imgIndex: imgIndex,
+      isRare: isRare,
+      type: chosenType,
+      size: size,
+      duration: duration,
+      delay: delay,
+      maxOpacity: maxOpacity.toFixed(2),
+      element: null,
+    };
+  }
+
+  function init() {
+    var layer = document.getElementById(LAYER_ID);
+    if (!layer) return;
+
+    // 清理旧的 style 标签和粒子
+    var oldStyle = document.getElementById("fc-keyframes");
+    if (oldStyle) oldStyle.remove();
+    layer.innerHTML = "";
+
+    var isMobile = window.innerWidth < 768;
+    var count = isMobile ? COUNT_MOBILE : COUNT_DESKTOP;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    var styleEl = document.createElement("style");
+    styleEl.id = "fc-keyframes";
+    var cssText = "";
+
+    for (var i = 0; i < count; i++) {
+      var p = createParticle(i, isMobile);
+
+      // 生成独立 keyframes
+      var kfName = createKeyframesName(p, i);
+      p.keyframeName = kfName;
+      cssText += generateKeyframes(p, vw, vh) + "\n";
+
+      // 创建 DOM
+      var el = document.createElement("div");
+      el.className = "floating-char";
+      el.setAttribute("style",
+        "width:" + p.size + "px;height:" + p.size + "px;" +
+        "animation:" + kfName + " " + p.duration.toFixed(1) + "s linear " + p.delay.toFixed(1) + "s infinite;" +
+        "opacity:0;"
+      );
+
+      var img = document.createElement("img");
+      img.src = BASE + "assets/images/floating-chars/" + CHAR_IMAGES[p.imgIndex];
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.draggable = false;
+      el.appendChild(img);
+
+      layer.appendChild(el);
+    }
+
+    styleEl.textContent = cssText;
+    document.head.appendChild(styleEl);
+  }
+
+  // 页面可见性
+  function handleVisibility() {
+    var layer = document.getElementById(LAYER_ID);
+    if (!layer) return;
+    if (document.hidden) {
+      layer.classList.add("paused");
+    } else {
+      layer.classList.remove("paused");
+    }
+  }
+
+  var resizeTimer = null;
+  function handleResize() {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(init, 600);
+  }
+
+  // 初始化
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function() {
+      init();
+      document.addEventListener("visibilitychange", handleVisibility);
+      window.addEventListener("resize", handleResize);
+    });
+  } else {
+    init();
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("resize", handleResize);
+  }
+})();
+</script>

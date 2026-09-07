@@ -103,7 +103,23 @@ export async function getCategoryList(): Promise<Category[]> {
 		count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
 	});
 
+	// 确保这四个核心分类始终显示在中央栏目中
+	const requiredCategories = ["书信集", "纪事录", "情绪随笔", "碎碎念"];
+	for (const cat of requiredCategories) {
+		if (!count[cat]) {
+			count[cat] = 0;
+		}
+	}
+
 	const lst = Object.keys(count).sort((a, b) => {
+		// 保持 requiredCategories 的固定顺序
+		const aIndex = requiredCategories.indexOf(a);
+		const bIndex = requiredCategories.indexOf(b);
+		if (aIndex !== -1 && bIndex !== -1) {
+			return aIndex - bIndex;
+		}
+		if (aIndex !== -1) return -1;
+		if (bIndex !== -1) return 1;
 		return (
 			count[b] - count[a] || a.toLowerCase().localeCompare(b.toLowerCase())
 		);

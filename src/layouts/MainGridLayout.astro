@@ -925,6 +925,9 @@ const hasMultipleImages =
                     {/* <Icon is:inline name="material-symbols:bookmark-rounded" class="banner-page-title-icon" /> */}
                     <span class="banner-page-title-text">{title}</span>
                 </div>
+                {description && (
+                    <p class="text-white/95 text-lg mt-3" style="font-family: var(--font-banner-subtitle, inherit); letter-spacing: 0.05em;">{description}</p>
+                )}
             </div>
         </div>
     )}
