@@ -11,13 +11,22 @@ import type { SakuraConfig } from "@/types/effectsConfig";
 import type { SakuraWorkerInboundMessage } from "@/types/sakura-worker";
 
 // ---------------------------------------------------------------------------
+// 表情图列表（与 public/images/emoji/ 对应）
+// ---------------------------------------------------------------------------
+const EMOJI_IMAGES = [
+	"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png",
+	"8.png", "9.png", "10.png", "11.png", "12.png", "13.png", "14.png",
+	"15.png", "16.png", "17.png",
+];
+
+// ---------------------------------------------------------------------------
 // 模块状态
 // ---------------------------------------------------------------------------
 let canvas: OffscreenCanvas | null = null;
 let ctx: OffscreenCanvasRenderingContext2D | null = null;
 let sakuraList: SakuraList | null = null;
 let animationId: number | null = null;
-let img: ImageBitmap | null = null;
+let imgs: ImageBitmap[] | null = null;
 let config: SakuraConfig | null = null;
 let windowWidth = 0;
 let windowHeight = 0;
@@ -193,43 +202,75 @@ class SakuraList {
 // ---------------------------------------------------------------------------
 // 核心逻辑
 // ---------------------------------------------------------------------------
-async function loadImage(): Promise<ImageBitmap> {
-	const response = await fetch("/flare-tide/assets/images/effects/sakura.png");
-	if (!response.ok) {
-		throw new Error(
-			`Failed to load sakura image: ${response.status} ${response.statusText}`,
-		);
+async function loadImages(): Promise<ImageBitmap[]> {
+	const BASE = "/flare-tide/images/emoji/";
+	const results: ImageBitmap[] = [];
+
+	// 并发加载所有表情图
+	const promises = EMOJI_IMAGES.map(async (name) => {
+		const response = await fetch(`${BASE}${name}`);
+		if (!response.ok) {
+			console.warn(`[SakuraWorker] Failed to load ${name}: ${response.status}`);
+			return null;
+		}
+		const blob = await response.blob();
+		return createImageBitmap(blob);
+	});
+
+	const bitmaps = await Promise.all(promises);
+	for (const bmp of bitmaps) {
+		if (bmp) results.push(bmp);
 	}
-	const blob = await response.blob();
-	return createImageBitmap(blob);
+
+	if (results.length === 0) {
+		throw new Error("No emoji images loaded successfully");
+	}
+
+	return results;
 }
 
-function createSakuraList(cfg: SakuraConfig, image: ImageBitmap): SakuraList {
+function createSakuraList(cfg: SakuraConfig, images: ImageBitmap[]): SakuraList {
 	// 用局部变量锁定 ctx,避免在循环中反复访问可空的模块级变量
 	const context = ctx;
 	if (!context) {
 		throw new Error("Canvas 2D context not initialized");
 	}
 	const list = new SakuraList();
-	const limitArray = new Array(cfg.sakuraNum).fill(cfg.limitTimes);
 
-	for (let i = 0; i < cfg.sakuraNum; i++) {
+	// 移动端尺寸调整：统一为0.6，粒子数量增加20%，透明度增加20%
+	const isMobile = typeof windowWidth !== "undefined" && windowWidth < 768;
+	const particleCount = isMobile ? Math.min(cfg.sakuraNum, 5) : cfg.sakuraNum;
+	const mobileCfg: SakuraConfig = isMobile
+		? {
+				...cfg,
+				sakuraNum: particleCount,
+				size: { min: 0.6, max: 0.6 },
+				opacity: { min: 0.3, max: 0.84 },
+			}
+		: cfg;
+
+	const limitArray = new Array(particleCount).fill(cfg.limitTimes);
+
+	for (let i = 0; i < particleCount; i++) {
+		// 随机选择一张表情图
+		const randomImg = images[Math.floor(Math.random() * images.length)];
+
 		const sakura = new Sakura(
-			getRandom("x", cfg),
-			getRandom("y", cfg),
-			getRandom("s", cfg),
-			getRandom("r", cfg),
-			getRandom("a", cfg),
+			getRandom("x", mobileCfg),
+			getRandom("y", mobileCfg),
+			getRandom("s", mobileCfg),
+			getRandom("r", mobileCfg),
+			getRandom("a", mobileCfg),
 			{
-				x: getRandom("fnx", cfg),
-				y: getRandom("fny", cfg),
-				r: getRandom("fnr", cfg),
-				a: getRandom("fna", cfg),
+				x: getRandom("fnx", mobileCfg),
+				y: getRandom("fny", mobileCfg),
+				r: getRandom("fnr", mobileCfg),
+				a: getRandom("fna", mobileCfg),
 			},
 			i,
-			image,
+			randomImg,
 			limitArray,
-			cfg,
+			mobileCfg,
 		);
 		sakura.draw(context);
 		list.push(sakura);
@@ -280,13 +321,15 @@ function clearCanvas() {
 function cleanup() {
 	cancelAnimation();
 	clearCanvas();
-	if (img) {
-		try {
-			img.close();
-		} catch {
-			// close 可能因重复调用或已释放而抛错,忽略
+	if (imgs) {
+		for (const bmp of imgs) {
+			try {
+				bmp.close();
+			} catch {
+				// close 可能因重复调用或已释放而抛错,忽略
+			}
 		}
-		img = null;
+		imgs = null;
 	}
 	sakuraList = null;
 	ctx = null;
@@ -322,8 +365,8 @@ async function handleMessage(msg: SakuraWorkerInboundMessage) {
 				canvas.height = windowHeight;
 				ctx = canvas.getContext("2d");
 
-				img = await loadImage();
-				sakuraList = createSakuraList(config, img);
+				imgs = await loadImages();
+				sakuraList = createSakuraList(config, imgs);
 				isRunning = true;
 				// init 完成后自动启动动画(除非页面当前隐藏)
 				if (!isHidden) {

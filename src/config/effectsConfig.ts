@@ -3,11 +3,11 @@ import type { SakuraConfig } from "../types/effectsConfig";
 // 特效配置 - 集中管理所有动画特效
 
 export const sakuraConfig: SakuraConfig = {
-	// 是否启用樱花特效（已替换为漂浮角色粒子）
-	enable: false,
+	// 是否启用樱花特效（表情图粒子，从右上往左下斜飘）
+	enable: true,
 
 	// 是否使用 Web Worker 绘制（关闭则走主线程 Canvas，Worker 可能因图片加载失败而静默崩溃）
-	useWorker: false,
+	useWorker: true,
 
 	// 樱花数量（桌面端，移动端在 SakuraEffect.astro 中进一步削减）
 	sakuraNum: 20,
@@ -23,12 +23,12 @@ export const sakuraConfig: SakuraConfig = {
 		max: 1.5,
 	},
 
-	// 樱花不透明度（降低以减少视觉干扰）
+	// 樱花不透明度（+10% 提升可见度）
 	opacity: {
 		// 樱花最小不透明度
-		min: 0.15,
+		min: 0.25,
 		// 樱花最大不透明度
-		max: 0.6,
+		max: 0.7,
 	},
 
 	// 樱花移动速度

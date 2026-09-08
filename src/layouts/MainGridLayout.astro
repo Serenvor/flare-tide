@@ -1122,8 +1122,8 @@ const hasMultipleImages =
                     
             {/* 主内容区包装器 - 包含静态栏位和swup容器，作为单个grid item */}
             <div class={staticBarClass}>
-                {/* 分类导航栏 - 全站渲染并显示 */}
-                {shouldRenderCategoryBar && <div id="category-bar-wrapper"><CategoryBar currentPostCategory={postCategory} /></div>}
+                {/* 分类导航栏 - 全站渲染并显示，sticky定位随滚动固定 */}
+                {shouldRenderCategoryBar && <div id="category-bar-wrapper" class="sticky top-4 z-10"><CategoryBar currentPostCategory={postCategory} /></div>}
                 {/* 主内容区 - 始终渲染，确保 Swup 容器存在 */}
                 <main
                     id="swup-container"
@@ -1187,6 +1187,27 @@ const hasMultipleImages =
 
 <FloatingControls headings={headings} encrypted={encrypted} />
 
+<!-- 移动端底部栏：仅首页显示 -->
+<script is:inline>
+    (function() {
+        function hideMobileBottomOnNonHome() {
+            if (window.innerWidth >= 768) return;
+            var sidebar = document.getElementById('mobile-bottom-sidebar');
+            if (!sidebar) return;
+            // 判断是否首页：路径为根路径或 /flare-tide/
+            var path = window.location.pathname;
+            var isHome = path === '/' || path === '/flare-tide/' || path === '/flare-tide' || path.endsWith('/index.html');
+            if (!isHome) {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = '';
+            }
+        }
+        hideMobileBottomOnNonHome();
+        window.addEventListener('swup:contentReplaced', hideMobileBottomOnNonHome);
+    })();
+</script>
+
 <!--
     触屏设备上让代码块的复制按钮默认隐藏，点一下代码块才显形。
     expressive-code 没给 <pre> 加 tabindex，点击代码区不会产生焦点，
@@ -1227,6 +1248,13 @@ const hasMultipleImages =
   #right-sidebar {
     transition: opacity 0.35s ease-in-out,
                 transform 0.35s ease-in-out;
+  }
+
+  /* CategoryBar 固定在导航栏下方 */
+  #category-bar-wrapper {
+    position: sticky;
+    top: 5rem;
+    z-index: 10;
   }
 
   @keyframes swupFadeOut {

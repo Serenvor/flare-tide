@@ -419,6 +419,14 @@
     }
   }
 
+  /* 移动端点击展开 */
+  :global(.countdown-item.is-expanded .countdown-value .cd-days-only) {
+    display: none !important;
+  }
+  :global(.countdown-item.is-expanded .countdown-value .cd-full) {
+    display: inline !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     :global(.countdown-value .cd-days-only) {
       display: none !important;
@@ -890,5 +898,24 @@
       if (e.target === overlayEl) hideEasterEgg();
     });
   }
+
+  // 移动端倒计时点击展开/收起
+  function initMobileCountdownToggle() {
+    var countdownItems = document.querySelectorAll('.countdown-item');
+    countdownItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        // 仅移动端生效
+        if (window.innerWidth >= 768) return;
+        // 切换展开状态
+        this.classList.toggle('is-expanded');
+      });
+    });
+  }
+  initMobileCountdownToggle();
+
+  // Swup 页面切换后重新初始化
+  window.addEventListener('swup:contentReplaced', function() {
+    initMobileCountdownToggle();
+  });
 })();
 </script>

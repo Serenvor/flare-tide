@@ -11,14 +11,13 @@ const { class: className, style } = Astro.props;
 ---
 
 <WidgetLayout name="💬 随机语录" showTitle={true} id="random-quote" class={className} style={style}>
-  <div id="random-quote-box" class="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed italic min-h-[3rem] cursor-pointer select-none" title="点击切换语录">
+  <div class="random-quote-box text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed italic min-h-[3rem] cursor-pointer select-none" title="点击切换语录">
     加载中...
   </div>
 </WidgetLayout>
 
 <script is:inline>
 (function() {
-  // 防重入：避免 Swup 页面切换时重复创建定时器
   if (window.__randomQuoteTimer) {
     clearInterval(window.__randomQuoteTimer);
     window.__randomQuoteTimer = null;
@@ -38,19 +37,20 @@ const { class: className, style } = Astro.props;
   ];
 
   var lastIndex = -1;
-  var INTERVAL_MS = 10000; // 10秒
+  var INTERVAL_MS = 10000;
 
   function showRandom() {
-    var el = document.getElementById('random-quote-box');
-    if (!el) return;
+    // 使用 querySelectorAll 更新所有实例（桌面侧栏 + 移动端底部）
+    var els = document.querySelectorAll('.random-quote-box');
+    if (!els.length) return;
     var idx;
     do { idx = Math.floor(Math.random() * quotes.length); } while (idx === lastIndex && quotes.length > 1);
     lastIndex = idx;
     var q = quotes[idx];
-    el.innerHTML = '<span class="text-pink-400">「</span>' + q.text + '<span class="text-pink-400">」</span><br/><span class="text-xs text-neutral-400 not-italic mt-1 block text-right">—— ' + q.author + '</span>';
+    var html = '<span class="text-pink-400">「</span>' + q.text + '<span class="text-pink-400">」</span><br/><span class="text-xs text-neutral-400 not-italic mt-1 block text-right">—— ' + q.author + '</span>';
+    els.forEach(function(el) { el.innerHTML = html; });
   }
 
-  // 启动自动刷新
   function startAutoRefresh() {
     if (window.__randomQuoteTimer) {
       clearInterval(window.__randomQuoteTimer);
@@ -61,13 +61,12 @@ const { class: className, style } = Astro.props;
   showRandom();
   startAutoRefresh();
 
-  // 点击手动切换 + 重置定时器（避免点击后加速刷新）
-  var box = document.getElementById('random-quote-box');
-  if (box) {
+  var boxes = document.querySelectorAll('.random-quote-box');
+  boxes.forEach(function(box) {
     box.addEventListener('click', function() {
       showRandom();
-      startAutoRefresh(); // 重置10秒倒计时
+      startAutoRefresh();
     });
-  }
+  });
 })();
 </script>

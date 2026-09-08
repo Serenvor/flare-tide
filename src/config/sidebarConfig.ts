@@ -15,13 +15,13 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 		{
 			type: "profile",
 			enable: true,
-			position: "top",
+			position: "sticky",
 			showOnPostPage: true,
 		},
 		{
 			type: "announcement",
 			enable: true,
-			position: "top",
+			position: "sticky",
 			showOnPostPage: true,
 		},
 	],
@@ -31,8 +31,8 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 		{
 			type: "randomQuote",
 			enable: true,
-			position: "top",
-			showOnPostPage: false,
+			position: "sticky",
+			showOnPostPage: true,
 		},
 		{
 			type: "tags",
@@ -71,14 +71,6 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			showOnPostPage: true,
 		},
 		{
-			type: "tags",
-			enable: true,
-			showOnPostPage: true,
-			specificConfig: {
-				collapseThreshold: 15,
-			},
-		},
-		{
 			type: "randomQuote",
 			enable: true,
 			showOnPostPage: false,
@@ -87,6 +79,14 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			type: "music",
 			enable: true,
 			showOnPostPage: true,
+		},
+		{
+			type: "tags",
+			enable: true,
+			showOnPostPage: true,
+			specificConfig: {
+				collapseThreshold: 15,
+			},
 		},
 	],
 };

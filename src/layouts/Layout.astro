@@ -8,7 +8,7 @@ import FancyboxManager from "@components/features/FancyboxManager.astro";
 import FontSetup from "@components/features/FontSetup.astro";
 import MusicManager from "@components/features/MusicManager.astro";
 import MusicPlayerView from "@components/features/MusicPlayerView.astro";
-import FloatingChars from "@components/features/FloatingChars.astro";
+import SakuraEffect from "@components/features/SakuraEffect.astro";
 import ConfigCarrier from "@components/layout/ConfigCarrier.astro";
 
 import {
@@ -625,9 +625,8 @@ const siteLang = lang.replace("_", "-");
       <MusicPlayerView />
     )}
 
-
-    <!-- Floating Chars - 漂浮角色粒子特效 -->
-    <FloatingChars />
+    <!-- Sakura Effect - Canvas 樱花/表情图漂浮特效 -->
+    <SakuraEffect />
 
     <!-- Fancybox Manager -->
     <FancyboxManager />
@@ -864,11 +863,17 @@ const siteLang = lang.replace("_", "-");
     .enable-banner #right-sidebar-sticky {
       top: calc(1rem - var(--banner-height-extend)) !important;
     }
+    .enable-banner #category-bar-wrapper {
+      top: calc(1rem - var(--banner-height-extend)) !important;
+    }
 
     body.enable-banner.sticky-navbar #sidebar-sticky,
     body.enable-banner.sticky-navbar #left-sidebar-sticky,
     body.enable-banner.sticky-navbar #right-sidebar-sticky {
-      top: calc(5.5rem - var(--banner-height-extend)) !important;
+      top: calc(5rem - var(--banner-height-extend)) !important;
+    }
+    body.enable-banner.sticky-navbar #category-bar-wrapper {
+      top: calc(5rem - var(--banner-height-extend)) !important;
     }
 
     .navbar-hidden {
@@ -906,6 +911,11 @@ const siteLang = lang.replace("_", "-");
     body.sticky-navbar.no-banner-layout #right-sidebar-sticky {
       top: 5.5rem !important;
     }
+    html[data-wallpaper-mode="none"] body.sticky-navbar #category-bar-wrapper,
+    html[data-wallpaper-mode="overlay"] body.sticky-navbar #category-bar-wrapper,
+    body.sticky-navbar.no-banner-layout #category-bar-wrapper {
+      top: 5.5rem !important;
+    }
   }
 
   @media (max-width: 1023px) {
@@ -922,6 +932,9 @@ const siteLang = lang.replace("_", "-");
     body.enable-banner:not(.lg\:is-home) #right-sidebar-sticky {
       top: 1rem !important;
     }
+    body.enable-banner:not(.lg\:is-home) #category-bar-wrapper {
+      top: 1rem !important;
+    }
 
     html[data-wallpaper-mode="none"] body.sticky-navbar #sidebar-sticky,
     html[data-wallpaper-mode="none"] body.sticky-navbar #left-sidebar-sticky,
@@ -932,7 +945,12 @@ const siteLang = lang.replace("_", "-");
     body.sticky-navbar.no-banner-layout #sidebar-sticky,
     body.sticky-navbar.no-banner-layout #left-sidebar-sticky,
     body.sticky-navbar.no-banner-layout #right-sidebar-sticky {
-      top: 5.5rem !important;
+      top: 5rem !important;
+    }
+    html[data-wallpaper-mode="none"] body.sticky-navbar #category-bar-wrapper,
+    html[data-wallpaper-mode="overlay"] body.sticky-navbar #category-bar-wrapper,
+    body.sticky-navbar.no-banner-layout #category-bar-wrapper {
+      top: 5rem !important;
     }
 
     body.sticky-navbar #top-row {

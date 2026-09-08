@@ -61,6 +61,30 @@ const coverPositionClass =
   }
 </div>
 
+<!-- 移动端隐藏"第一封信"文章 -->
+<script is:inline>
+  (function() {
+    if (window.innerWidth >= 768) return;
+    
+    function hideFirstLetter() {
+      var cards = document.querySelectorAll('.post-card-item');
+      cards.forEach(function(card) {
+        var titleEl = card.querySelector('h2, h3, .post-title, a');
+        if (titleEl && titleEl.textContent.includes('第一封信')) {
+          card.style.display = 'none';
+        }
+      });
+    }
+    
+    hideFirstLetter();
+    
+    // Swup 页面切换后重新隐藏
+    if (window.swup) {
+      window.addEventListener('swup:contentReplaced', hideFirstLetter);
+    }
+  })();
+</script>
+
 <!-- 立即执行脚本：防止刷新时的布局闪烁 -->
 <script is:inline define:vars={{ defaultLayout, mobileDefaultLayout, columnWidth }}>
   (function() {

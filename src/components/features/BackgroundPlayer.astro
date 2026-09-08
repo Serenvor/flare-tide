@@ -30,6 +30,16 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 				<video id="bg-player-video" preload="auto" playsinline class="size-full object-cover"></video>
 			</div>
 
+			{/* 移动端关闭按钮 - 右上角，仅移动端显示 */}
+			<button
+				id="bg-close-btn"
+				class="absolute top-3 right-3 z-30 w-10 h-10 flex items-center justify-center rounded-full border border-white/30 bg-black/40 text-white/80 backdrop-blur-sm cursor-pointer transition-all duration-200 hover:bg-black/60 hover:text-white lg:hidden"
+				title="关闭视频"
+				aria-label="关闭视频"
+			>
+				<Icon is:inline name="material-symbols:close-rounded" class="text-[1.25rem]" />
+			</button>
+
 			<div id="bg-player-controls" class="absolute bottom-4 left-4 z-30 flex items-center gap-1.5 group">
 				{hasMultiple && (
 					<button
@@ -75,9 +85,9 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		var prevBtn = document.getElementById("bg-prev-btn");
 		var nextBtn = document.getElementById("bg-next-btn");
 		var toast = document.getElementById("bg-player-toast");
+		var closeBtn = document.getElementById("bg-close-btn");
 
 		if (!video) return;
-
 		// 防止 is:inline 脚本重复注册监听器（Swup 导航会重新执行脚本）
 		if (video.getAttribute("data-player-init")) return;
 		video.setAttribute("data-player-init", "true");
@@ -167,12 +177,10 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		function onError() {
 			errorCount++;
 			if (isMultiple && errorCount < urlList.length) {
-				// 多视频模式下自动尝试下一个
 				currentIndex = pickIndex(currentIndex);
 				video.src = urlList[currentIndex];
 				video.load();
 			} else {
-				// 所有视频都失败或只有单个视频
 				isPlaying = false;
 				if (overlay) { overlay.classList.remove("opacity-100"); overlay.classList.add("opacity-0"); }
 				syncAttr();
@@ -184,10 +192,18 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		window.addEventListener("bg-player-toggle", toggle);
 		video.addEventListener("ended", onEnded);
 		video.addEventListener("error", onError);
-		// 播放成功时重置错误计数
 		video.addEventListener("playing", function () { errorCount = 0; });
 		if (prevBtn) prevBtn.addEventListener("click", function () { switchTrack(prevIndex()); });
 		if (nextBtn) nextBtn.addEventListener("click", function () { switchTrack(pickIndex(currentIndex)); });
+
+		// 移动端关闭按钮：停止播放并隐藏视频
+		if (closeBtn) {
+			closeBtn.addEventListener("click", function () {
+				if (isPlaying) {
+					toggle(); // 复用 toggle 停止播放
+				}
+			});
+		}
 
 		// 切换壁纸模式时停止播放
 		window.addEventListener("wallpaperModeChange", function (e) {
@@ -206,17 +222,89 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		}
 
 		function cleanup() {
-			// 视频仍在播放时保留属性，供 Navbar 同步按钮状态
 			if (!isPlaying) {
 				document.body.removeAttribute("data-bg-video-playing");
 				document.documentElement.removeAttribute("data-bg-video-playing");
 			}
 		}
-		document.addEventListener("astro:before-swap", cleanup);
-	})();
+	document.addEventListener("astro:before-swap", cleanup);
+
+	// 移动端播放视频时，强制显示壁纸并调整位置
+	function adjustMainContentForVideo() {
+		if (window.innerWidth >= 768) return;
+		var mainEl = document.querySelector(".w-full.z-30.pointer-events-none");
+		var wallpaperEl = document.getElementById("wallpaper-wrapper");
+		// 判断是否首页
+		var path = window.location.pathname.replace(/\/$/, "") || "/";
+		var isHome = path === "/" || path === "/flare-tide" || path.endsWith("/index.html");
+
+		if (isPlaying) {
+			// 强制显示壁纸容器
+			if (wallpaperEl) {
+				wallpaperEl.style.setProperty("display", "block", "important");
+				wallpaperEl.style.setProperty("opacity", "1", "important");
+				wallpaperEl.style.setProperty("transform", "none", "important");
+				wallpaperEl.style.setProperty("top", "4.5rem", "important");
+			}
+			if (mainEl) {
+				if (isHome) {
+					// 首页：内容在视频上方（视频在背后播放）
+					mainEl.style.setProperty("top", "4.5rem", "important");
+					mainEl.style.setProperty("min-height", "calc(100vh - 4.5rem)", "important");
+				} else {
+					// 非首页：内容偏移10vh，紧贴视频
+					mainEl.style.setProperty("top", "calc(4.5rem + 27vh)", "important");
+					mainEl.style.setProperty("min-height", "calc(100vh - 4.5rem - 10vh)", "important");
+				}
+			}
+		} else {
+			// 恢复
+			if (wallpaperEl) {
+				wallpaperEl.style.removeProperty("display");
+				wallpaperEl.style.removeProperty("opacity");
+				wallpaperEl.style.removeProperty("transform");
+				wallpaperEl.style.removeProperty("top");
+			}
+			if (mainEl) {
+				mainEl.style.removeProperty("top");
+				mainEl.style.removeProperty("min-height");
+			}
+		}
+	}
+
+	window.addEventListener("bg-player-state-change", adjustMainContentForVideo);
+
+	// Swup 导航时重新应用（Layout.astro 会重置 wallpaper-wrapper 样式）
+	function reapplyOnNav() {
+		if (isPlaying) {
+			requestAnimationFrame(function() { adjustMainContentForVideo(); });
+		}
+	}
+	// Swup 可能还没初始化，用 swup:enable 等待就绪
+	function registerSwupHook() {
+		if (window.swup && window.swup.hooks) {
+			window.swup.hooks.on("page:view", reapplyOnNav);
+		} else {
+			document.addEventListener("swup:enable", function handler() {
+				document.removeEventListener("swup:enable", handler);
+				if (window.swup && window.swup.hooks) {
+					window.swup.hooks.on("page:view", reapplyOnNav);
+				}
+			});
+		}
+	}
+	registerSwupHook();
+})();
 </script>
 
 <style>
+	/* bg-player 填充整个壁纸区域，消除移动端间隙 */
+	#bg-player {
+		position: absolute;
+		inset: 0;
+		z-index: 15;
+	}
+
 	:global([data-bg-video-playing] #banner-images-container),
 	:global([data-bg-video-playing] #banner-dim-container),
 	:global([data-bg-video-playing] #banner-overlay-container),

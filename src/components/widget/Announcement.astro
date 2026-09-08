@@ -34,17 +34,17 @@ const showTitle = widgetConfig?.showTitle !== false;
     </div>
 
     <!-- 可选链接和关闭按钮 -->
-    <div class="flex items-center justify-between gap-3">
-      <div>
+    <div class="flex items-center gap-3">
+      <div class="ml-auto">
         {
           config.link && config.link.enable !== false && (
             <a
               href={config.link.external ? config.link.url : url(config.link.url)}
               target={config.link.external ? "_blank" : "_self"}
               rel={config.link.external ? "noopener noreferrer" : undefined}
-              class="btn-regular rounded-lg px-3 py-1.5 text-sm font-medium active:scale-95 transition-transform"
+              class="btn-regular rounded-lg px-3 py-1.5 text-sm font-medium active:scale-95 transition-transform bg-pink-100 hover:bg-pink-200 dark:bg-pink-900/40 dark:hover:bg-pink-900/60"
             >
-              {config.link.text}
+              <img src={`${import.meta.env.BASE_URL}images/emoji/17.png`} alt="" class="h-[50px] w-[50px] inline-block align-middle" title="幕后絮语" />
             </a>
           )
         }

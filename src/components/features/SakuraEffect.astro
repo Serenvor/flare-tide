@@ -276,32 +276,47 @@
 			if (!this.img || !this.ctx) return;
 
 			this.sakuraList = new MainThreadSakuraList();
-			// 移动端进一步削减粒子数
+			// 移动端进一步削减粒子数和尺寸
 			const isMobile = window.innerWidth < 768;
 			const particleCount = isMobile
-				? Math.min(this.config.sakuraNum, 8)
+				? Math.min(this.config.sakuraNum, 5)
 				: this.config.sakuraNum;
 			const limitArray = new Array(particleCount).fill(
 				this.config.limitTimes,
 			);
 
+			// 移动端尺寸统一为0.6，透明度增加20%
+			const mobileConfig = isMobile
+				? {
+						...this.config,
+						size: {
+							min: 0.6,
+							max: 0.6,
+						},
+						opacity: {
+							min: 0.3,
+							max: 0.84,
+						},
+					}
+				: this.config;
+
 			for (let i = 0; i < particleCount; i++) {
 				const sakura = new MainThreadSakura(
-					getRandomMainThread("x", this.config),
-					getRandomMainThread("y", this.config),
-					getRandomMainThread("s", this.config),
-					getRandomMainThread("r", this.config),
-					getRandomMainThread("a", this.config),
+					getRandomMainThread("x", mobileConfig),
+					getRandomMainThread("y", mobileConfig),
+					getRandomMainThread("s", mobileConfig),
+					getRandomMainThread("r", mobileConfig),
+					getRandomMainThread("a", mobileConfig),
 					{
-						x: getRandomMainThread("fnx", this.config),
-						y: getRandomMainThread("fny", this.config),
-						r: getRandomMainThread("fnr", this.config),
-						a: getRandomMainThread("fna", this.config),
+						x: getRandomMainThread("fnx", mobileConfig),
+						y: getRandomMainThread("fny", mobileConfig),
+						r: getRandomMainThread("fnr", mobileConfig),
+						a: getRandomMainThread("fna", mobileConfig),
 					},
 					i,
 					this.img,
 					limitArray,
-					this.config,
+					mobileConfig,
 				);
 
 				sakura.draw(this.ctx);
@@ -384,6 +399,11 @@
 		private resizeRafId: number | null = null;
 		/** Worker 是否已完成 init(收到 ready)。用于区分 init 阶段失败与运行期错误。 */
 		private workerReady = false;
+		/**
+		 * init/stop 周期代际标记。每次 stop 自增,使 await 期间被取消的 init 失效,
+		 * 避免图片加载期间用户切换导致重复创建 canvas(DOM 泄漏)。
+		 */
+		private initGeneration = 0;
 
 		constructor(config: SakuraConfig) {
 			this.config = config;
@@ -395,6 +415,7 @@
 			}
 			this.isRunning = true;
 			this.workerReady = false;
+			const gen = ++this.initGeneration;
 
 			try {
 				// 创建 canvas 并转移到 Worker(转移后主线程不能再获取其 context)
@@ -491,6 +512,8 @@
 		}
 
 		stop() {
+			// 使进行中的 init 失效,避免其在 await 完成后继续创建资源
+			this.initGeneration++;
 			if (this.resizeRafId !== null) {
 				cancelAnimationFrame(this.resizeRafId);
 				this.resizeRafId = null;

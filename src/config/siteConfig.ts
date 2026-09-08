@@ -6,7 +6,7 @@ const SITE_LANG = "zh_CN";
 
 export const siteConfig: SiteConfig = {
 	// 站点标题
-	title: "斐拾婷光",
+	title: "Flare-Tide·汐焰拾叙",
 
 	// 站点副标题
 	subtitle: "记录我们的每一刻",
@@ -16,10 +16,10 @@ export const siteConfig: SiteConfig = {
 
 	// 站点描述
 	description:
-		"斐拾婷光 — zf 与 ltt 的恋爱日常记录，用文字和照片留住每一个温暖的瞬间。",
+		"Flare-Tide·汐焰拾叙 — zf 与 ltt 的恋爱日常记录，用文字和照片留住每一个温暖的瞬间。",
 
 	// 站点关键词
-	keywords: ["斐拾婷光", "恋爱日常", "情侣博客", "恋爱纪念"],
+	keywords: ["恋爱日常", "情侣博客", "恋爱纪念"],
 
 	// 主题色
 	themeColor: {
@@ -45,7 +45,7 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		{
 			// 图标文件路径
-			src: "/favicon/firefly-32.png",
+			src: "/images/emoji/15.png",
 			// 可选，指定主题 'light' | 'dark'
 			// theme: "light",
 			// 可选，图标大小

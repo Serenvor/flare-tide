@@ -1,7 +1,9 @@
 # <img src="/flare-tide/images/emoji/15.png" width="66" height="66" style="vertical-align: text-bottom; display: inline; position: relative; top: 6px; left: 2px;" class="not-prose" alt="">      Flare‑Tide·汐焰拾叙
 这里是我为你搭建的小小星球。
 我用文字和照片，悄悄攒下我们相识以来的每一次心跳、每一场拥抱、每一段旅途。
-这里没有惊天动地的故事，只有我眼中最真实的你，和我们最平凡的日常。
+这里没有惊天动地的故事，只有我眼中最真实的你，和我们最平凡的日常。<img src="/flare-tide/images/emoji/16.png" width="40" height="40" style="vertical-align: text-bottom; display: inline; position: relative; top: 4px; left: 2px;" class="not-prose" alt="">
+
+
 
 ## <img src="/flare-tide/images/emoji/13.png" width="30" height="30" style="vertical-align: text-bottom; display: inline;" class="not-prose" alt="">     为什么会有 Flare‑Tide·汐焰拾叙？
 
@@ -19,13 +21,13 @@
 
 它是我送给你的情书，也是我们漫长岁月里，一只永远不会沉没的漂流瓶。
 
-## <img src="/flare-tide/images/emoji/13.png" width="30" height="30" style="vertical-align: text-bottom; display: inline; position: relative; top: 3px; left: 2px;" class="not-prose" alt="">       关于「Flare‑Tide·汐焰拾叙」
+## <img src="/flare-tide/images/emoji/17.png" width="60" height="60" style="vertical-align: text-bottom; display: inline; position: relative; top: 1px; left: -6px;" class="not-prose" alt="">          关于「Flare‑Tide·汐焰拾叙」
 
-**Flare** —— 取自斐（F）。
+<img src="/flare-tide/images/emoji/6.png" width="30" height="30" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">  **Flare** —— 取自斐（F）。
 那是我心底的火焰，炽热、莽撞、带着一点不管不顾的勇气。
 遇见你之前，这团火只是漫无目的地烧着；遇见你之后，它只想为你发光。
 
-**Tide** —— 取自婷（T）。
+<img src="/flare-tide/images/emoji/7.png" width="26" height="26" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">  **Tide** —— 取自婷（T）。
 那是你的潮汐，温柔、恒久，有着抚平一切的力量。
 你的每一次涨落，都在牵引着我的呼吸；你从不喧嚣，却让我漂泊的心终于找到了岸。
 
@@ -46,10 +48,11 @@
 
 我们的故事永远有下一页。
 
-## <img src="/flare-tide/images/emoji/13.png" width="30" height="30" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">      关于我们
+## <img src="/flare-tide/images/emoji/12.png" width="40" height="40" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">      关于我们
 
-- **zf** — 一个因为遇见你，而开始认真记录生活的人
-- **ltt** — 一个让我愿意记录一辈子的人
+<img src="/flare-tide/images/emoji/6.png" width="30" height="30" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">   **zf** —— 一个因为遇见你，而开始认真记录生活的人
+
+ <img src="/flare-tide/images/emoji/7.png" width="26" height="26" style="vertical-align: text-bottom; display: inline; position: relative; top: -2px; left: 2px;" class="not-prose" alt="">   **ltt** —— 一个让我愿意记录一辈子的人
 
 **2024.07.14** 在一起 💑
 **2024.09.15** 第一次见面 🌹
