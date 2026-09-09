@@ -47,3 +47,6 @@ package/
 .codex*
 .claude
 .mimocode
+
+# Local environment variables
+.env.local
