@@ -30,15 +30,7 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 				<video id="bg-player-video" preload="auto" playsinline class="size-full object-cover"></video>
 			</div>
 
-			{/* 移动端关闭按钮 - 右上角，仅移动端显示 */}
-			<button
-				id="bg-close-btn"
-				class="absolute top-3 right-3 z-30 w-10 h-10 flex items-center justify-center rounded-full border border-white/30 bg-black/40 text-white/80 backdrop-blur-sm cursor-pointer transition-all duration-200 hover:bg-black/60 hover:text-white lg:hidden"
-				title="关闭视频"
-				aria-label="关闭视频"
-			>
-				<Icon is:inline name="material-symbols:close-rounded" class="text-[1.25rem]" />
-			</button>
+
 
 			<div id="bg-player-controls" class="absolute bottom-4 left-4 z-30 flex items-center gap-1.5 group">
 				{hasMultiple && (
@@ -85,7 +77,6 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		var prevBtn = document.getElementById("bg-prev-btn");
 		var nextBtn = document.getElementById("bg-next-btn");
 		var toast = document.getElementById("bg-player-toast");
-		var closeBtn = document.getElementById("bg-close-btn");
 
 		if (!video) return;
 		// 防止 is:inline 脚本重复注册监听器（Swup 导航会重新执行脚本）
@@ -195,15 +186,6 @@ const tLoadError = i18n(I18nKey.videoLoadError);
 		video.addEventListener("playing", function () { errorCount = 0; });
 		if (prevBtn) prevBtn.addEventListener("click", function () { switchTrack(prevIndex()); });
 		if (nextBtn) nextBtn.addEventListener("click", function () { switchTrack(pickIndex(currentIndex)); });
-
-		// 移动端关闭按钮：停止播放并隐藏视频
-		if (closeBtn) {
-			closeBtn.addEventListener("click", function () {
-				if (isPlaying) {
-					toggle(); // 复用 toggle 停止播放
-				}
-			});
-		}
 
 		// 切换壁纸模式时停止播放
 		window.addEventListener("wallpaperModeChange", function (e) {
