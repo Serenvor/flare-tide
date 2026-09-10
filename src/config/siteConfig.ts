@@ -12,7 +12,9 @@ export const siteConfig: SiteConfig = {
 	subtitle: "记录我们的每一刻",
 
 	// 站点 URL
-	site_url: "https://flare-tide-15w.pages.dev/",
+	site_url: process.env.DEPLOY_PLATFORM === "github"
+		? "https://Serenvor.github.io/flare-tide/"
+		: "https://flare-tide-15w.pages.dev/",
 
 	// 站点描述
 	description:

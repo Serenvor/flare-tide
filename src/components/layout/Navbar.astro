@@ -86,19 +86,19 @@ function isActiveLink(linkUrl: string): boolean {
 	if (linkUrl === "/") {
 		return (
 			currentPath === "/" ||
-			currentPath === "/flare-tide/" ||
+			currentPath.endsWith("/flare-tide/") ||
 			currentPath === "/flare-tide"
 		);
 	}
 	// For links with query params, compare full URL including params
 	if (linkUrl.includes("?")) {
-		const cleanCurrent = currentPath.replace(/\/flare-tide\/?/, "/");
+		const cleanCurrent = currentPath.replace(/\/[^/]*\/?$/, "/");
 		const currentSearch = Astro.url.search || "";
 		const cleanLinkPath = linkUrl.split("?")[0];
 		const linkSearch = linkUrl.split("?")[1] ? "?" + linkUrl.split("?")[1] : "";
 		return cleanCurrent === cleanLinkPath && currentSearch === linkSearch;
 	}
-	const cleanPath = currentPath.replace(/\/flare-tide\/?/, "/");
+	const cleanPath = currentPath.replace(/\/[^/]*\/?$/, "/");
 	return cleanPath.startsWith(linkUrl) && linkUrl !== "/";
 }
 
@@ -363,17 +363,17 @@ function updateNavbarActiveLink() {
 		try {
 			const linkUrl = new URL(linkHref, window.location.origin);
 			if (linkUrl.pathname === "/") {
-				return pathname === "/" || pathname === "/flare-tide/" || pathname === "/flare-tide";
+				return pathname === "/" || pathname.endsWith("/flare-tide/") || pathname === "/flare-tide";
 			}
 			// For links with query params, compare full URL including params
 			if (linkUrl.search) {
-				const cleanCurrent = pathname.replace(/\/flare-tide\/?/, "/");
+				const cleanCurrent = pathname.replace(/\/[^/]*\/?$/, "/");
 				const currentSearch = window.location.search || "";
-				const cleanLinkPath = linkUrl.pathname.replace(/\/flare-tide\/?/, "/");
+				const cleanLinkPath = linkUrl.pathname.replace(/\/[^/]*\/?$/, "/");
 				return cleanCurrent === cleanLinkPath && currentSearch === linkUrl.search;
 			}
-			const cleanPath = pathname.replace(/\/flare-tide\/?/, "/");
-			const cleanLinkPath = linkUrl.pathname.replace(/\/flare-tide\/?/, "/");
+			const cleanPath = pathname.replace(/\/[^/]*\/?$/, "/");
+			const cleanLinkPath = linkUrl.pathname.replace(/\/[^/]*\/?$/, "/");
 			return cleanPath.startsWith(cleanLinkPath) && cleanLinkPath !== "/";
 		} catch {
 			return false;

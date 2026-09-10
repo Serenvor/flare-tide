@@ -6,7 +6,7 @@
  */
 ---
 
-<div class="love-timer-wrapper card-base p-4 md:p-6 mb-4">
+<div class="love-timer-wrapper card-base p-4 md:p-6 mb-4" style={`--timer-bg-url: url('${import.meta.env.BASE_URL}assets/images/timer/timer-bg.png')`}>
   <!-- 浮动爱心装饰 -->
   <div class="floating-hearts" aria-hidden="true"></div>
 
@@ -99,7 +99,7 @@
         rgba(255, 240, 245, 0.82) 0%,
         rgba(255, 228, 238, 0.75) 40%,
         rgba(255, 240, 245, 0.82) 100%),
-      url('/flare-tide/assets/images/timer/timer-bg.png') center / cover no-repeat;
+      var(--timer-bg-url) center / cover no-repeat;
     background-color: #fff0f5;
     border: 1px solid rgba(255, 105, 180, 0.15);
     border-radius: var(--radius-large, 1rem);
@@ -140,7 +140,7 @@
         rgba(30, 20, 28, 0.85) 0%,
         rgba(40, 25, 35, 0.78) 40%,
         rgba(30, 20, 28, 0.85) 100%),
-      url('/flare-tide/assets/images/timer/timer-bg.png') center / cover no-repeat;
+      var(--timer-bg-url) center / cover no-repeat;
     background-color: #1e141c;
     border-color: rgba(255, 105, 180, 0.1);
     animation:

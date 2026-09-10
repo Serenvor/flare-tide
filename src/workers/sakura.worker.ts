@@ -202,13 +202,15 @@ class SakuraList {
 // ---------------------------------------------------------------------------
 // 核心逻辑
 // ---------------------------------------------------------------------------
+// 站点 base 路径，init 时由主线程传入
+let IMAGE_BASE = "/";
+
 async function loadImages(): Promise<ImageBitmap[]> {
-	const BASE = "/flare-tide/images/emoji/";
 	const results: ImageBitmap[] = [];
 
 	// 并发加载所有表情图
 	const promises = EMOJI_IMAGES.map(async (name) => {
-		const response = await fetch(`${BASE}${name}`);
+		const response = await fetch(`${IMAGE_BASE}images/emoji/${name}`);
 		if (!response.ok) {
 			console.warn(`[SakuraWorker] Failed to load ${name}: ${response.status}`);
 			return null;
@@ -361,6 +363,7 @@ async function handleMessage(msg: SakuraWorkerInboundMessage) {
 				canvas = msg.canvas;
 				windowWidth = msg.width;
 				windowHeight = msg.height;
+				IMAGE_BASE = msg.baseUrl || "/";
 				canvas.width = windowWidth;
 				canvas.height = windowHeight;
 				ctx = canvas.getContext("2d");

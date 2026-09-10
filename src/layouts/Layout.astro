@@ -637,7 +637,7 @@ const siteLang = lang.replace("_", "-");
     <!-- 点击角色彩蛋：3张角色图片随机切换 -->
     <script is:inline data-swup-ignore-script>
       (function() {
-        var BASE = "/flare-tide/";
+        var BASE = import.meta.env.BASE_URL;
         var CHARS = [
           "assets/images/floating-chars/317523ce3b887f5e65531e4c217c61d2.png",
           "assets/images/floating-chars/1720259d1f6f690c6c13af7b80ae7eaa.png",

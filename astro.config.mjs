@@ -67,7 +67,7 @@ const adapter = process.env.CF_WORKERS
 export default defineConfig({
 	site: siteConfig.site_url,
 
-	base: "/",
+	base: process.env.DEPLOY_PLATFORM === "github" ? "/flare-tide/" : "/",
 	trailingSlash: "always",
 
 	server: {

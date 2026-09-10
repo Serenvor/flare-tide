@@ -16,18 +16,18 @@ function isActiveMobile(linkUrl: string): boolean {
 	if (linkUrl === "/") {
 		return (
 			currentPath === "/" ||
-			currentPath === "/flare-tide/" ||
+			currentPath.endsWith("/flare-tide/") ||
 			currentPath === "/flare-tide"
 		);
 	}
 	// For links with query params, compare full URL including params
 	if (linkUrl.includes("?")) {
-		const cleanCurrent = currentPath.replace(/\/flare-tide\/?/, "/");
+		const cleanCurrent = currentPath.replace(/\/[^/]*\/?$/, "/");
 		const cleanLinkPath = linkUrl.split("?")[0];
 		const linkSearch = linkUrl.split("?")[1] ? "?" + linkUrl.split("?")[1] : "";
 		return cleanCurrent === cleanLinkPath && currentSearch === linkSearch;
 	}
-	const cleanPath = currentPath.replace(/\/flare-tide\/?/, "/");
+	const cleanPath = currentPath.replace(/\/[^/]*\/?$/, "/");
 	return cleanPath.startsWith(linkUrl) && linkUrl !== "/";
 }
 ---

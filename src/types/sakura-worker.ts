@@ -13,6 +13,8 @@ export type SakuraWorkerInboundMessage =
 			canvas: OffscreenCanvas;
 			width: number;
 			height: number;
+			/** 站点 base 路径，构建时由 import.meta.env.BASE_URL 注入 */
+			baseUrl: string;
 	  }
 	| { type: "start" }
 	| { type: "stop" }

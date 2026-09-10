@@ -1196,7 +1196,7 @@ const hasMultipleImages =
             if (!sidebar) return;
             // 判断是否首页：路径为根路径或 /flare-tide/
             var path = window.location.pathname;
-            var isHome = path === '/' || path === '/flare-tide/' || path === '/flare-tide' || path.endsWith('/index.html');
+            var isHome = path === '/' || path.endsWith('/flare-tide/') || path === '/flare-tide' || path.endsWith('/index.html');
             if (!isHome) {
                 sidebar.style.display = 'none';
             } else {
