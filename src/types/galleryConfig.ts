@@ -1,8 +1,10 @@
 // 相册元信息（用户在配置文件中填写）
 export type GalleryAlbum = {
 	id: string; // URL slug + 目录名，如 "japan-2025"
-	name: string; // 相册名称
-	description?: string; // 相册描述
+	name: string; // 相册名称（详情页全名）
+	nameEn?: string; // 英文名（封面卡片显示）
+	description?: string; // 相册描述（封面卡片短描述）
+	subtitle?: string; // 相册副标题（详情页长描述）
 	date?: string; // 日期
 	location?: string; // 拍摄地点
 	tags?: string[]; // 标签（用于首页筛选）

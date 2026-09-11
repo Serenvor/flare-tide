@@ -7,6 +7,7 @@ import { url } from "@/utils/url-utils";
 interface Props {
 	id: string;
 	name: string;
+	nameEn?: string;
 	cover: string;
 	description?: string;
 	date?: string;
@@ -19,6 +20,7 @@ interface Props {
 const {
 	id,
 	name,
+	nameEn,
 	cover,
 	description,
 	date,
@@ -72,7 +74,7 @@ const lqipProps = cover ? getLqipProps(cover, undefined, true) : { style: "" };
     <div class="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
     <div class="absolute bottom-0 left-0 right-0 p-4">
       <h3 class="font-bold text-base text-white line-clamp-1 drop-shadow-lg">
-        {name}
+        {nameEn || name}
       </h3>
 
       {description && (
